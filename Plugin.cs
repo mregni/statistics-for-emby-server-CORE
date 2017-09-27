@@ -23,7 +23,8 @@ namespace statistics
                 new PluginPageInfo
                 {
                     Name = "Statistics",
-                    EmbeddedResourcePath = GetType().Namespace + ".Configuration.configPage.html"
+                    EmbeddedResourcePath = GetType().Namespace + ".Configuration.configPage.html",
+                    EnableInMainMenu = true
                 },
                 new PluginPageInfo
                 {

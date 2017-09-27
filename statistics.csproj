@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+<PropertyGroup> <TargetFrameworks>netstandard1.3;</TargetFrameworks> <AssemblyVersion>1.0.0.0</AssemblyVersion> <FileVersion>1.0.0.0</FileVersion> <PostBuildEvent>xcopy "$(TargetPath)" "%AppData%\Emby-Server\Plugins\" /y</PostBuildEvent> </PropertyGroup>
+
+<ItemGroup>
+  <None Remove="Configuration\configPage.html" />
+</ItemGroup>
+
+<ItemGroup>
+  <EmbeddedResource Include="Configuration\configPage.html" />
+  <EmbeddedResource Include="Configuration\movieTextPage.html" />
+  <EmbeddedResource Include="Configuration\moviePage.html" />
+  <EmbeddedResource Include="Configuration\showOverview.html" />
+  <EmbeddedResource Include="Configuration\userBased.html" />
+</ItemGroup>
+
+<ItemGroup>
+  <PackageReference Include="MediaBrowser.Server.Core" Version="3.3.10" />
+</ItemGroup>
+
+<ItemGroup>
+  <Folder Include="Models\Configuration\" />
+</ItemGroup>
+
+</Project>

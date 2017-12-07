@@ -1,6 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-<PropertyGroup> <TargetFrameworks>netstandard1.3;</TargetFrameworks> <AssemblyVersion>1.0.0.0</AssemblyVersion> <FileVersion>1.0.0.0</FileVersion> <PostBuildEvent>xcopy "$(TargetPath)" "%AppData%\Emby-Server\Plugins\" /y</PostBuildEvent> </PropertyGroup>
+<PropertyGroup> 
+  <TargetFrameworks>netstandard1.3;</TargetFrameworks> 
+  <AssemblyVersion>2.0.1.0</AssemblyVersion> 
+  <FileVersion>2.0.1.0</FileVersion> 
+</PropertyGroup>
 
 <ItemGroup>
   <None Remove="Configuration\configPage.html" />

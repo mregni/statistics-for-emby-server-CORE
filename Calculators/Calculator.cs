@@ -10,6 +10,7 @@ using MediaBrowser.Controller.Entities.TV;
 using MediaBrowser.Controller.Library;
 using MediaBrowser.Model.Entities;
 using MediaBrowser.Model.IO;
+using MediaBrowser.Model.Logging;
 using statistics.Calculators;
 using statistics.Models;
 using statistics.Models.Configuration;
@@ -23,12 +24,15 @@ namespace Statistics.Helpers
     public class Calculator : BaseCalculator
     {
         private IFileSystem _fileSystem;
-        public Calculator(User user, IUserManager userManager, ILibraryManager libraryManager, IUserDataManager userDataManager, IFileSystem fileSystem)
+		private ILogger _logger;
+        public Calculator(User user, IUserManager userManager, ILibraryManager libraryManager, IUserDataManager userDataManager, IFileSystem fileSystem, ILogger logger)
             : base(userManager, libraryManager, userDataManager)
         {
             User = user;
             _fileSystem = fileSystem;
-        }
+			_logger = logger;
+
+		}
 
         #region TopYears
 
@@ -760,10 +764,10 @@ namespace Statistics.Helpers
             var valueLineTwo = "";
             var id = "";
 
-            var movies = GetAllMovies();
+            var movies = GetAllMovies().Where(x => x.DateCreated != DateTime.MinValue).ToList();
             if (movies.Any())
             {
-                var youngest = movies.Aggregate((curMax, x) => (curMax == null || x.DateCreated > curMax.DateCreated ? x : curMax));
+                var youngest = movies.Aggregate((curMax, x) => curMax == null || x.DateCreated > curMax.DateCreated ? x : curMax);
 
                 if (youngest != null)
                 {
@@ -795,27 +799,26 @@ namespace Statistics.Helpers
             var valueLineTwo = "";
             var id = "";
 
-            var episodes = GetAllOwnedEpisodes().ToList();
+            var episodes = GetAllOwnedEpisodes().Where(x => x.DateCreated != DateTime.MinValue).ToList();
             if (episodes.Any())
             {
                 var youngest = episodes.Aggregate((curMax, x) => (curMax == null || x.DateCreated > curMax.DateCreated ? x : curMax));
-
                 if (youngest != null)
                 {
-                    var numberOfTotalDays = DateTime.Now.Date - youngest.DateCreated;
+					var numberOfTotalDays = DateTime.Now.Date - youngest.DateCreated;
 
                     valueLineOne =
                         CheckMaxLength(numberOfTotalDays.Days == 0
-                            ? "Today"
+                            ? $"Today"
                             : $"{CheckForPlural("day", numberOfTotalDays.Days, "", "", false)} ago");
 
 
-                    valueLineTwo = CheckMaxLength($"{youngest.Series?.Name} S{youngest.AiredSeasonNumber} E{youngest.IndexNumber} ");
+                    valueLineTwo = CheckMaxLength($"{youngest.Series.Name} S{youngest.AiredSeasonNumber} E{youngest.IndexNumber} ");
                     id = youngest.Id.ToString();
-                }
+				}
             }
 
-            return new ValueGroup
+			return new ValueGroup
             {
                 Title = Constants.NewestAddedEpisode,
                 ValueLineOne = valueLineOne,

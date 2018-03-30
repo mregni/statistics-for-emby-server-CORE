@@ -96,7 +96,7 @@ namespace Statistics.ScheduledTasks
             {
                 await Task.Run(() =>
                 {
-                    using (var calculator = new Calculator(user, _userManager, _libraryManager, _userDataManager, _fileSystem))
+                    using (var calculator = new Calculator(user, _userManager, _libraryManager, _userDataManager, _fileSystem, _logger))
                     {
                         var overallTime = calculator.CalculateOverallTime();
                         activeUsers.Add(user.Name, new RunTime(overallTime.Raw));
@@ -142,7 +142,7 @@ namespace Statistics.ScheduledTasks
                 progress.Report(percentPerUser * numComplete);
             }
 
-            using (var calculator = new Calculator(null, _userManager, _libraryManager, _userDataManager, _fileSystem))
+            using (var calculator = new Calculator(null, _userManager, _libraryManager, _userDataManager, _fileSystem, _logger))
             {
                 PluginConfiguration.MovieQualities = calculator.CalculateMovieQualities();
                 PluginConfiguration.MostActiveUsers = calculator.CalculateMostActiveUsers(activeUsers);

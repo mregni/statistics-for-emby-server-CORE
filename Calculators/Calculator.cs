@@ -795,7 +795,7 @@ namespace Statistics.Helpers
             var valueLineTwo = "";
             var id = "";
 
-            var episodes = GetAllOwnedEpisodes();
+            var episodes = GetAllOwnedEpisodes().ToList();
             if (episodes.Any())
             {
                 var youngest = episodes.Aggregate((curMax, x) => (curMax == null || x.DateCreated > curMax.DateCreated ? x : curMax));
@@ -806,11 +806,11 @@ namespace Statistics.Helpers
 
                     valueLineOne =
                         CheckMaxLength(numberOfTotalDays.Days == 0
-                            ? $"Today"
+                            ? "Today"
                             : $"{CheckForPlural("day", numberOfTotalDays.Days, "", "", false)} ago");
 
 
-                    valueLineTwo = CheckMaxLength($"{youngest.Series.Name} S{youngest.AiredSeasonNumber} E{youngest.IndexNumber} ");
+                    valueLineTwo = CheckMaxLength($"{youngest.Series?.Name} S{youngest.AiredSeasonNumber} E{youngest.IndexNumber} ");
                     id = youngest.Id.ToString();
                 }
             }

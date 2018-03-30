@@ -809,11 +809,10 @@ namespace Statistics.Helpers
 
                     valueLineOne =
                         CheckMaxLength(numberOfTotalDays.Days == 0
-                            ? $"Today"
+                            ? "Today"
                             : $"{CheckForPlural("day", numberOfTotalDays.Days, "", "", false)} ago");
 
-
-                    valueLineTwo = CheckMaxLength($"{youngest.Series.Name} S{youngest.AiredSeasonNumber} E{youngest.IndexNumber} ");
+                    valueLineTwo = CheckMaxLength($"{youngest.Series?.Name} S{youngest.AiredSeasonNumber} E{youngest.IndexNumber} ");
                     id = youngest.Id.ToString();
 				}
             }

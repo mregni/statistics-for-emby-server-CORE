@@ -24,17 +24,15 @@ namespace Statistics.Helpers
         private readonly IZipClient _zipClient;
         private readonly IHttpClient _httpClient;
         private readonly IFileSystem _fileSystem;
-        private readonly IMemoryStreamFactory _memoryStreamProvider;
         private readonly IServerApplicationPaths _serverApplicationPaths;
 
         public bool IsCalculationFailed = false;
-        public ShowProgressCalculator(IUserManager userManager, ILibraryManager libraryManager, IUserDataManager userDataManager, IZipClient zipClient, IHttpClient httpClient, IFileSystem fileSystem, IMemoryStreamFactory memoryStreamProvider, IServerApplicationPaths serverApplicationPaths,  User user = null)
+        public ShowProgressCalculator(IUserManager userManager, ILibraryManager libraryManager, IUserDataManager userDataManager, IZipClient zipClient, IHttpClient httpClient, IFileSystem fileSystem, IServerApplicationPaths serverApplicationPaths,  User user = null)
             : base(userManager, libraryManager, userDataManager)
         {
             _zipClient = zipClient;
             _httpClient = httpClient;
             _fileSystem = fileSystem;
-            _memoryStreamProvider = memoryStreamProvider;
             _serverApplicationPaths = serverApplicationPaths;
             User = user;
         }
@@ -43,7 +41,7 @@ namespace Statistics.Helpers
         {
             try
             {
-                var provider = new TheTvDbProvider(_zipClient, _httpClient, _fileSystem, _memoryStreamProvider, _serverApplicationPaths);
+                var provider = new TheTvDbProvider(_zipClient, _httpClient, _fileSystem, _serverApplicationPaths);
                 return provider.GetServerTime(cancellationToken).Result;
             }
             catch (Exception)
@@ -55,7 +53,7 @@ namespace Statistics.Helpers
         public List<UpdateShowModel> CalculateTotalEpisodes(IEnumerable<string> showIds, CancellationToken cancellationToken)
         {
             var result = new List<UpdateShowModel>();
-            var provider = new TheTvDbProvider(_zipClient, _httpClient, _fileSystem, _memoryStreamProvider, _serverApplicationPaths);
+            var provider = new TheTvDbProvider(_zipClient, _httpClient, _fileSystem, _serverApplicationPaths);
 
             try
             {
@@ -77,7 +75,7 @@ namespace Statistics.Helpers
         {
             try
             {
-                var provider = new TheTvDbProvider(_zipClient, _httpClient, _fileSystem, _memoryStreamProvider, _serverApplicationPaths);
+                var provider = new TheTvDbProvider(_zipClient, _httpClient, _fileSystem, _serverApplicationPaths);
                 return provider.GetSeriesIdsToUpdate(showIds, time, cancellationToken).Result;
             }
             catch (Exception)

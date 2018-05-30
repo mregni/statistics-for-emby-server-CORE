@@ -29,7 +29,6 @@ namespace Statistics.ScheduledTasks
         private readonly IHttpClient _httpClient;
         private readonly ILibraryManager _libraryManager;
         private readonly ILogger _logger;
-        private readonly IMemoryStreamFactory _memoryStreamProvider;
         private readonly IServerApplicationPaths _serverApplicationPaths;
         private readonly IUserDataManager _userDataManager;
         private readonly IUserManager _userManager;
@@ -39,7 +38,7 @@ namespace Statistics.ScheduledTasks
             IUserManager userManager,
             IUserDataManager userDataManager,
             ILibraryManager libraryManager, IZipClient zipClient, IHttpClient httpClient, IFileSystem fileSystem,
-            IMemoryStreamFactory memoryStreamProvider, IServerApplicationPaths serverApplicationPaths)
+            IServerApplicationPaths serverApplicationPaths)
         {
             _logger = logger.GetLogger("Statistics");
             _libraryManager = libraryManager;
@@ -48,7 +47,6 @@ namespace Statistics.ScheduledTasks
             _zipClient = zipClient;
             _httpClient = httpClient;
             _fileSystem = fileSystem;
-            _memoryStreamProvider = memoryStreamProvider;
             _serverApplicationPaths = serverApplicationPaths;
         }
 
@@ -131,7 +129,7 @@ namespace Statistics.ScheduledTasks
                                 calculator.CalculateLastSeenShows()
                             },
                             ShowProgresses =
-                                new ShowProgressCalculator(_userManager, _libraryManager, _userDataManager, _zipClient, _httpClient, _fileSystem, _memoryStreamProvider, _serverApplicationPaths, user)
+                                new ShowProgressCalculator(_userManager, _libraryManager, _userDataManager, _zipClient, _httpClient, _fileSystem, _serverApplicationPaths, user)
                                     .CalculateShowProgress(PluginConfiguration.TotalEpisodeCounts)
                         };
                         PluginConfiguration.UserStats.Add(stat);
@@ -190,7 +188,7 @@ namespace Statistics.ScheduledTasks
                 .Where(i => !string.IsNullOrEmpty(i.GetProviderId(MetadataProviders.Tvdb)))
                 .Select(i => i.GetProviderId(MetadataProviders.Tvdb));
 
-            var calculator = new ShowProgressCalculator(_userManager, _libraryManager, _userDataManager, _zipClient, _httpClient, _fileSystem, _memoryStreamProvider, _serverApplicationPaths);
+            var calculator = new ShowProgressCalculator(_userManager, _libraryManager, _userDataManager, _zipClient, _httpClient, _fileSystem, _serverApplicationPaths);
 
             var time = PluginConfiguration.TotalEpisodeCounts.LastUpdateTime;
             bool callFailed;

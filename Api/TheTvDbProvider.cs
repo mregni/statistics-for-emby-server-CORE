@@ -21,19 +21,16 @@ namespace Statistics.Api
         private const string ApiKey = "3B9470F2306003B8";
         private readonly IFileSystem _fileSystem;
         private readonly IHttpClient _httpClient;
-        private readonly IMemoryStreamFactory _memoryStreamProvider;
         private readonly IServerApplicationPaths _serverApplicationPaths;
         private readonly IZipClient _zipClient;
 
         internal readonly SemaphoreSlim TvDbResourcePool = new SemaphoreSlim(2, 2);
 
-        public TheTvDbProvider(IZipClient zipClient, IHttpClient httpClient, IFileSystem fileSystem,
-            IMemoryStreamFactory memoryStreamProvider, IServerApplicationPaths serverApplicationPaths)
+        public TheTvDbProvider(IZipClient zipClient, IHttpClient httpClient, IFileSystem fileSystem, IServerApplicationPaths serverApplicationPaths)
         {
             _zipClient = zipClient;
             _httpClient = httpClient;
             _fileSystem = fileSystem;
-            _memoryStreamProvider = memoryStreamProvider;
             _serverApplicationPaths = serverApplicationPaths;
         }
 
@@ -67,7 +64,7 @@ namespace Statistics.Api
             {
                 DeleteXmlFiles(fullPath);
 
-                using (var ms = _memoryStreamProvider.CreateNew())
+                using (var ms = new MemoryStream())
                 {
                     await zipStream.CopyToAsync(ms).ConfigureAwait(false);
 

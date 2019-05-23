@@ -83,12 +83,11 @@ namespace statistics.Calculators
             var query = new InternalItemsQuery(User)
             {
                 IncludeItemTypes = new[] { type.Name },
-                Limit = 0,
                 Recursive = true,
                 IsVirtualItem = false
             };
 
-            return LibraryManager.GetCount(query);
+            return LibraryManager.GetItemList(query).Count();
         }
 
         protected IEnumerable<BoxSet> GetBoxsets()
@@ -104,7 +103,7 @@ namespace statistics.Calculators
             {
                 IncludeItemTypes = new[] { typeof(Episode).Name },
                 Recursive = true,
-                ParentId = show.Id,
+                Parent = show,
                 IsSpecialSeason = false,               
                 IsVirtualItem = false
             };
@@ -119,7 +118,7 @@ namespace statistics.Calculators
             {
                 IncludeItemTypes = new[] { typeof(Episode).Name },
                 Recursive = true,
-                ParentId = show.Id,
+                Parent = show,
                 IsSpecialSeason = false,
                 IsVirtualItem = false,
                 IsPlayed = true
@@ -135,7 +134,7 @@ namespace statistics.Calculators
             {
                 IncludeItemTypes = new[] { typeof(Season).Name },
                 Recursive = true,
-                ParentId = show.Id,
+                Parent = show,
                 IsSpecialSeason = true,
                 IsVirtualItem = false
             };
@@ -150,7 +149,7 @@ namespace statistics.Calculators
             {
                 IncludeItemTypes = new[] { typeof(Season).Name },
                 Recursive = true,
-                ParentId = show.Id,
+                Parent = show,
                 IsSpecialSeason = true,
                 MaxPremiereDate = DateTime.Now,
                 IsVirtualItem = false

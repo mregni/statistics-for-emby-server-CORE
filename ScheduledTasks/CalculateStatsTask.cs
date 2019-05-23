@@ -66,7 +66,6 @@ namespace Statistics.ScheduledTasks
             // No users found, so stop the task
             if (users.Count == 0)
             {
-                _logger.Info("No Users returned");
                 return;
             }
 
@@ -155,14 +154,10 @@ namespace Statistics.ScheduledTasks
                 PluginConfiguration.NewestMovie = calculator.CalculateNewestMovie();
                 PluginConfiguration.HighestRating = calculator.CalculateHighestRating();
                 PluginConfiguration.LowestRating = calculator.CalculateLowestRating();
-                PluginConfiguration.NewestAddedMovie = calculator.CalculateNewestAddedMovie();
 
                 PluginConfiguration.TotalShows = calculator.CalculateTotalShows();
                 PluginConfiguration.TotalOwnedEpisodes = calculator.CalculateTotalOwnedEpisodes();
                 PluginConfiguration.TotalShowStudios = calculator.CalculateTotalShowStudios();
-                PluginConfiguration.BiggestShow = calculator.CalculateBiggestShow();
-                PluginConfiguration.LongestShow = calculator.CalculateLongestShow();
-                PluginConfiguration.NewestAddedEpisode = calculator.CalculateNewestAddedEpisode();
 
                 PluginConfiguration.MovieQualityItems = calculator.CalculateMovieQualityList();
             }

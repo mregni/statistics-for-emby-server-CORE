@@ -24,8 +24,6 @@ namespace Statistics.Api
         private readonly IServerApplicationPaths _serverApplicationPaths;
         private readonly IZipClient _zipClient;
 
-        internal readonly SemaphoreSlim TvDbResourcePool = new SemaphoreSlim(2, 2);
-
         public TheTvDbProvider(IZipClient zipClient, IHttpClient httpClient, IFileSystem fileSystem, IServerApplicationPaths serverApplicationPaths)
         {
             _zipClient = zipClient;
@@ -58,7 +56,6 @@ namespace Statistics.Api
             using (var zipStream = await _httpClient.Get(new HttpRequestOptions
             {
                 Url = url,
-                ResourcePool = TvDbResourcePool,
                 CancellationToken = cancellationToken
             }).ConfigureAwait(false))
             {

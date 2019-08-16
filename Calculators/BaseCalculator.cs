@@ -140,7 +140,7 @@ namespace statistics.Calculators
             };
 
             var seasons = LibraryManager.GetItemList(query).OfType<Season>();
-            return seasons.Sum(x => x.Children.Count(e => e.PremiereDate <= DateTime.Now || e.PremiereDate == null));
+            return seasons.Sum(x => x.GetChildren(User).Count(e => e.PremiereDate <= DateTime.Now || e.PremiereDate == null));
         }
 
         protected int GetPlayedSpecials(Series show)
@@ -156,7 +156,7 @@ namespace statistics.Calculators
             };
 
             var seasons = LibraryManager.GetItemList(query).OfType<Season>();
-            return seasons.Sum(x => x.Children.Count(e => (e.PremiereDate <= DateTime.Now || e.PremiereDate == null) && e.IsPlayed(User)));
+            return seasons.Sum(x => x.GetChildren(User).Count(e => (e.PremiereDate <= DateTime.Now || e.PremiereDate == null) && e.IsPlayed(User)));
         }
 
         #endregion
@@ -168,7 +168,7 @@ namespace statistics.Calculators
                 IncludeItemTypes = new[] { typeof(T).Name },
                 Recursive = true,
                 IsVirtualItem = false,
-                DtoOptions = new DtoOptions(false)
+                DtoOptions = new DtoOptions(true)
                 {
                     EnableImages = false
                 }
@@ -185,7 +185,7 @@ namespace statistics.Calculators
                 IsPlayed = isPLayed,
                 Recursive = true,
                 IsVirtualItem = false,
-                DtoOptions = new DtoOptions(false)
+                DtoOptions = new DtoOptions(true)
                 {
                     EnableImages = false
                 }

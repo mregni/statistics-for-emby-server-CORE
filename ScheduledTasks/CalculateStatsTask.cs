@@ -226,7 +226,7 @@ namespace Statistics.ScheduledTasks
 
             foreach (var showId in updatedList)
             {
-                PluginConfiguration.TotalEpisodeCounts.IdList.First(x => x.ShowId == showId).Count = updatedTotals.First(x => x.ShowId == showId).Count;
+                PluginConfiguration.TotalEpisodeCounts.IdList.FirstOrDefault(x => x.ShowId == showId).Count = updatedTotals.FirstOrDefault(x => x.ShowId == showId).Count;
             }
 
             var newTotals = calculator.CalculateTotalEpisodes(newShows, cancellationToken);
@@ -235,7 +235,7 @@ namespace Statistics.ScheduledTasks
 
             foreach (var showId in newShows)
             {
-                PluginConfiguration.TotalEpisodeCounts.IdList.Add(new UpdateShowModel(showId, newTotals.First(x => x.ShowId == showId).Count));
+                PluginConfiguration.TotalEpisodeCounts.IdList.Add(new UpdateShowModel(showId, newTotals.FirstOrDefault(x => x.ShowId == showId).Count));
             }
 
             return false;

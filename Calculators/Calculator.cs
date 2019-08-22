@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Threading;
 using MediaBrowser.Controller.Entities;
-using MediaBrowser.Controller.Entities.Movies;
 using MediaBrowser.Controller.Entities.TV;
 using MediaBrowser.Controller.Library;
 using MediaBrowser.Model.Entities;
@@ -568,53 +564,56 @@ namespace Statistics.Helpers
             };
         }
 
-        //public ValueGroup CalculateBiggestShow()
-        //{
-        //    var valueLineOne = Constants.NoData;
-        //    var valueLineTwo = "";
-        //    var id = "";
+        public ValueGroup CalculateBiggestShow()
+        {
+            var valueLineOne = Constants.NoData;
+            var valueLineTwo = "";
+            var id = "";
 
-        //    var shows = GetAllSeries();
-        //    if (shows.Any())
-        //    {
-        //        var biggestShow = new Series();
-        //        double maxSize = 0;
-        //        foreach (var show in shows)
-        //        {
-        //            var episodes = GetAllEpisodes().Where(x => x.Parent.Id == show.Id && x.Path != null);
-        //            try
-        //            {
-        //                var showSize = episodes.Sum(x =>
-        //                {
-        //                    var f = _fileSystem.GetFileSystemInfo(x.Path);
-        //                    return f.Length;
-        //                });
+            var shows = GetAllSeries();
+            if (shows.Any())
+            {
+                var biggestShow = new Series();
+                double maxSize = 0;
+                foreach (var show in shows)
+                {
+                    //This is assuming the recommened folder structure for series/season/episode
+                    //https://github.com/MediaBrowser/Emby/wiki/TV-Library
+                    var episodes = GetAllEpisodes().Where(x => x.GetParent().GetParent().Id == show.Id && x.Path != null);
+                    try
+                    {
+                        var showSize = episodes.Sum(x =>
+                        {
+                            var f = _fileSystem.GetFileSystemInfo(x.Path);
+                            return f.Length;
+                        });
 
-        //                if (maxSize >= showSize) continue;
+                        if (maxSize >= showSize) continue;
 
-        //                maxSize = showSize;
-        //                biggestShow = show;
-        //            }
-        //            catch (Exception e)
-        //            {
-        //                // ignored
-        //            }
-        //        }
+                        maxSize = showSize;
+                        biggestShow = show;
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                }
 
-        //        maxSize = maxSize / 1073741824; //Byte to Gb
-        //        valueLineOne = CheckMaxLength($"{maxSize:F1} Gb");
-        //        valueLineTwo = CheckMaxLength($"{biggestShow.Name}");
-        //        id = biggestShow.Id.ToString();
-        //    }
-        //    return new ValueGroup
-        //    {
-        //        Title = Constants.BiggestShow,
-        //        ValueLineOne = valueLineOne,
-        //        ValueLineTwo = valueLineTwo,
-        //        Size = "half",
-        //        Id = id
-        //    };
-        //}
+                maxSize = maxSize / 1073741824; //Byte to Gb
+                valueLineOne = CheckMaxLength($"{maxSize:F1} Gb");
+                valueLineTwo = CheckMaxLength($"{biggestShow.Name}");
+                id = biggestShow.Id.ToString();
+            }
+
+            return new ValueGroup
+            {
+                Title = Constants.BiggestShow,
+                ValueLineOne = valueLineOne,
+                ValueLineTwo = valueLineTwo,
+                Size = "half",
+                Id = id
+            };
+        }
 
         #endregion
 
@@ -644,49 +643,51 @@ namespace Statistics.Helpers
             };
         }
 
-        //public ValueGroup CalculateLongestShow()
-        //{
-        //    var valueLineOne = Constants.NoData;
-        //    var valueLineTwo = "";
-        //    var id = "";
+        public ValueGroup CalculateLongestShow()
+        {
+            var valueLineOne = Constants.NoData;
+            var valueLineTwo = "";
+            var id = "";
 
-        //    var shows = GetAllSeries();
+            var shows = GetAllSeries();
 
-        //    if (shows.Any())
-        //    {
-        //        var maxShow = new Series();
-        //        long maxTime = 0;
-        //        foreach (var show in shows)
-        //        {
-        //            var episodes = GetAllEpisodes().Where(x => x.Parent.Id == show.Id && x.Path != null);
-        //            var showSize = episodes.Sum(x => x.RunTimeTicks ?? 0);
+            if (shows.Any())
+            {
+                var maxShow = new Series();
+                long maxTime = 0;
+                foreach (var show in shows)
+                {
+                    //This is assuming the recommened folder structure for series/season/episode
+                    //https://github.com/MediaBrowser/Emby/wiki/TV-Library
+                    var episodes = GetAllEpisodes().Where(x => x.GetParent().GetParent().Id == show.Id && x.Path != null);
+                    var showSize = episodes.Sum(x => x.RunTimeTicks ?? 0);
 
-        //            if (maxTime >= showSize) continue;
+                    if (maxTime >= showSize) continue;
 
-        //            maxTime = showSize;
-        //            maxShow = show;
+                    maxTime = showSize;
+                    maxShow = show;
 
-        //        }
+                }
 
-        //        var time = new TimeSpan(maxTime).ToString(@"hh\:mm\:ss");
+                var time = new TimeSpan(maxTime).ToString(@"hh\:mm\:ss");
 
-        //        var days = CheckForPlural("day", new TimeSpan(maxTime).Days, "", "and");
+                var days = CheckForPlural("day", new TimeSpan(maxTime).Days, "", "and");
 
-        //        valueLineOne = CheckMaxLength($"{days} {time}");
-        //        valueLineTwo = CheckMaxLength($"{maxShow.Name}");
-        //        id = maxShow.Id.ToString();
-        //    }
+                valueLineOne = CheckMaxLength($"{days} {time}");
+                valueLineTwo = CheckMaxLength($"{maxShow.Name}");
+                id = maxShow.Id.ToString();
+            }
 
-        //    return new ValueGroup
-        //    {
-        //        Title = Constants.LongestShow,
-        //        ValueLineOne = valueLineOne,
-        //        ValueLineTwo = valueLineTwo,
-        //        Size = "half",
-        //        Id = id
-        //    };
-        //}
-
+            return new ValueGroup
+            {
+                Title = Constants.LongestShow,
+                ValueLineOne = valueLineOne,
+                ValueLineTwo = valueLineTwo,
+                Size = "half",
+                Id = id
+            };
+        }
+        
         #endregion
 
         #region Release Date
@@ -758,75 +759,75 @@ namespace Statistics.Helpers
             };
         }
 
-   //     Currently not working anymore so hiding from the plugin screen
-   //     public ValueGroup CalculateNewestAddedMovie()
-   //     {
-   //         var valueLineOne = Constants.NoData;
-   //         var valueLineTwo = "";
-   //         var id = "";
+        //Currently not working anymore so hiding from the plugin screen
+        public ValueGroup CalculateNewestAddedMovie()
+        {
+            var valueLineOne = Constants.NoData;
+            var valueLineTwo = "";
+            var id = "";
 
-   //         var movies = GetAllMovies().Where(x => x.DateCreated.DateTime != DateTime.MinValue).ToList();
-   //         if (movies.Any())
-   //         {
-   //             var youngest = movies.Aggregate((curMax, x) => curMax == null || x.DateCreated.DateTime > curMax.DateCreated.DateTime ? x : curMax);
+            var movies = GetAllMovies().Where(x => x.DateCreated.DateTime != DateTime.MinValue).ToList();
+            if (movies.Any())
+            {
+                var youngest = movies.Aggregate((curMax, x) => curMax == null || x.DateCreated.DateTime > curMax.DateCreated.DateTime ? x : curMax);
 
-   //             if (youngest != null)
-   //             {
-   //                 var numberOfTotalDays = DateTime.Now - youngest.DateCreated.DateTime;
+                if (youngest != null)
+                {
+                    var numberOfTotalDays = DateTime.Now - youngest.DateCreated.DateTime;
 
-   //                 valueLineOne =
-   //                     CheckMaxLength(numberOfTotalDays.Days == 0
-   //                         ? $"Today"
-   //                         : $"{CheckForPlural("day", numberOfTotalDays.Days, "", "", false)} ago");
+                    valueLineOne =
+                        CheckMaxLength(numberOfTotalDays.Days == 0
+                            ? $"Today"
+                            : $"{CheckForPlural("day", numberOfTotalDays.Days, "", "", false)} ago");
 
-   //                 valueLineTwo = CheckMaxLength($"{youngest.Name}");
-   //                 id = youngest.Id.ToString();
-   //             }
-   //         }
+                    valueLineTwo = CheckMaxLength($"{youngest.Name}");
+                    id = youngest.Id.ToString();
+                }
+            }
 
-   //         return new ValueGroup
-   //         {
-   //             Title = Constants.NewestAddedMovie,
-   //             ValueLineOne = valueLineOne,
-   //             ValueLineTwo = valueLineTwo,
-   //             Size = "half",
-   //             Id = id
-   //         };
-   //     }
+            return new ValueGroup
+            {
+                Title = Constants.NewestAddedMovie,
+                ValueLineOne = valueLineOne,
+                ValueLineTwo = valueLineTwo,
+                Size = "half",
+                Id = id
+            };
+        }
 
-   //     public ValueGroup CalculateNewestAddedEpisode()
-   //     {
-   //         var valueLineOne = Constants.NoData;
-   //         var valueLineTwo = "";
-   //         var id = "";
+        public ValueGroup CalculateNewestAddedEpisode()
+        {
+            var valueLineOne = Constants.NoData;
+            var valueLineTwo = "";
+            var id = "";
 
-   //         var episodes = GetAllOwnedEpisodes().Where(x => x.DateCreated.DateTime != DateTime.MinValue).ToList();
-   //         if (episodes.Any())
-   //         {
-   //             var youngest = episodes.Aggregate((curMax, x) => (curMax == null || x.DateCreated.DateTime > curMax.DateCreated.DateTime ? x : curMax));
-   //             if (youngest != null)
-   //             {
-			//		var numberOfTotalDays = DateTime.Now.Date - youngest.DateCreated.DateTime;
+            var episodes = GetAllOwnedEpisodes().Where(x => x.DateCreated.DateTime != DateTime.MinValue).ToList();
+            if (episodes.Any())
+            {
+                var youngest = episodes.Aggregate((curMax, x) => (curMax == null || x.DateCreated.DateTime > curMax.DateCreated.DateTime ? x : curMax));
+                if (youngest != null)
+                {
+                    var numberOfTotalDays = DateTime.Now.Date - youngest.DateCreated.DateTime;
 
-   //                 valueLineOne =
-   //                     CheckMaxLength(numberOfTotalDays.Days == 0
-   //                         ? "Today"
-   //                         : $"{CheckForPlural("day", numberOfTotalDays.Days, "", "", false)} ago");
+                    valueLineOne =
+                        CheckMaxLength(numberOfTotalDays.Days == 0
+                            ? "Today"
+                            : $"{CheckForPlural("day", numberOfTotalDays.Days, "", "", false)} ago");
 
-   //                 valueLineTwo = CheckMaxLength($"{youngest.Series?.Name} S{youngest.AiredSeasonNumber} E{youngest.IndexNumber} ");
-   //                 id = youngest.Id.ToString();
-			//	}
-   //         }
+                    valueLineTwo = CheckMaxLength($"{youngest.Series?.Name} S{youngest.AiredSeasonNumber} E{youngest.IndexNumber} ");
+                    id = youngest.Id.ToString();
+                }
+            }
 
-			//return new ValueGroup
-   //         {
-   //             Title = Constants.NewestAddedEpisode,
-   //             ValueLineOne = valueLineOne,
-   //             ValueLineTwo = valueLineTwo,
-   //             Size = "half",
-   //             Id = id
-   //         };
-   //     }
+            return new ValueGroup
+            {
+                Title = Constants.NewestAddedEpisode,
+                ValueLineOne = valueLineOne,
+                ValueLineTwo = valueLineTwo,
+                Size = "half",
+                Id = id
+            };
+        }
 
         #endregion
 

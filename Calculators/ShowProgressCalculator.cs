@@ -16,6 +16,7 @@ using MediaBrowser.Model.Querying;
 using statistics.Models.Configuration;
 using Statistics.Api;
 using statistics.Calculators;
+using MediaBrowser.Model.Logging;
 
 namespace Statistics.Helpers
 {
@@ -27,7 +28,7 @@ namespace Statistics.Helpers
         private readonly IServerApplicationPaths _serverApplicationPaths;
 
         public bool IsCalculationFailed = false;
-        public ShowProgressCalculator(IUserManager userManager, ILibraryManager libraryManager, IUserDataManager userDataManager, IZipClient zipClient, IHttpClient httpClient, IFileSystem fileSystem, IServerApplicationPaths serverApplicationPaths,  User user = null)
+        public ShowProgressCalculator(IUserManager userManager, ILibraryManager libraryManager, IUserDataManager userDataManager, IZipClient zipClient, IHttpClient httpClient, IFileSystem fileSystem, IServerApplicationPaths serverApplicationPaths, User user = null)
             : base(userManager, libraryManager, userDataManager)
         {
             _zipClient = zipClient;

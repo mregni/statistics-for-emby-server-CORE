@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -14,7 +13,6 @@ using MediaBrowser.Model.IO;
 using MediaBrowser.Model.Logging;
 using MediaBrowser.Model.Tasks;
 using statistics;
-using statistics.Calculators;
 using statistics.Configuration;
 using statistics.Models.Configuration;
 using Statistics.Api;
@@ -154,10 +152,14 @@ namespace Statistics.ScheduledTasks
                 PluginConfiguration.NewestMovie = calculator.CalculateNewestMovie();
                 PluginConfiguration.HighestRating = calculator.CalculateHighestRating();
                 PluginConfiguration.LowestRating = calculator.CalculateLowestRating();
+                PluginConfiguration.NewestAddedMovie = calculator.CalculateNewestAddedMovie();
 
                 PluginConfiguration.TotalShows = calculator.CalculateTotalShows();
                 PluginConfiguration.TotalOwnedEpisodes = calculator.CalculateTotalOwnedEpisodes();
                 PluginConfiguration.TotalShowStudios = calculator.CalculateTotalShowStudios();
+                PluginConfiguration.BiggestShow = calculator.CalculateBiggestShow();
+                PluginConfiguration.LongestShow = calculator.CalculateLongestShow();
+                PluginConfiguration.NewestAddedEpisode = calculator.CalculateNewestAddedEpisode();
 
                 PluginConfiguration.MovieQualityItems = calculator.CalculateMovieQualityList();
             }
@@ -202,7 +204,7 @@ namespace Statistics.ScheduledTasks
             Plugin.Instance.SaveConfiguration();
         }
 
-        private bool FirstTvdbConnection(ShowProgressCalculator calculator, IEnumerable<string> seriesIdsInLibrary, CancellationToken cancellationToken )
+        private bool FirstTvdbConnection(ShowProgressCalculator calculator, IEnumerable<string> seriesIdsInLibrary, CancellationToken cancellationToken)
         {
             var totals = calculator.CalculateTotalEpisodes(seriesIdsInLibrary, cancellationToken);
             PluginConfiguration.TotalEpisodeCounts.IdList = totals;
@@ -226,7 +228,7 @@ namespace Statistics.ScheduledTasks
 
             foreach (var showId in updatedList)
             {
-                PluginConfiguration.TotalEpisodeCounts.IdList.First(x => x.ShowId == showId).Count = updatedTotals.First(x => x.ShowId == showId).Count;
+                PluginConfiguration.TotalEpisodeCounts.IdList.FirstOrDefault<UpdateShowModel>(x => x.ShowId == showId).Count = updatedTotals.FirstOrDefault<UpdateShowModel>(x => x.ShowId == showId).Count;
             }
 
             var newTotals = calculator.CalculateTotalEpisodes(newShows, cancellationToken);
@@ -235,7 +237,7 @@ namespace Statistics.ScheduledTasks
 
             foreach (var showId in newShows)
             {
-                PluginConfiguration.TotalEpisodeCounts.IdList.Add(new UpdateShowModel(showId, newTotals.First(x => x.ShowId == showId).Count));
+                PluginConfiguration.TotalEpisodeCounts.IdList.Add(new UpdateShowModel(showId, newTotals.FirstOrDefault<UpdateShowModel>(x => x.ShowId == showId).Count));
             }
 
             return false;
@@ -249,7 +251,7 @@ namespace Statistics.ScheduledTasks
                 TimeOfDayTicks = TimeSpan.FromHours(0).Ticks
             }; //12am
 
-            return new[] {trigger};
+            return new[] { trigger };
         }
     }
 }

@@ -312,10 +312,15 @@
                                 $("#movieStat", page).append(MainPage.createStatWithPoster(config.NewestMovie));
                                 $("#movieStat", page).append(MainPage.createStatWithPoster(config.HighestRating));
                                 $("#movieStat", page).append(MainPage.createStatWithPoster(config.LowestRating));
+                                $("#movieStat", page).append(MainPage.createStatWithPoster(config.NewestAddedMovie));
+
 
                                 $("#showStat", page).append(MainPage.createStat(config.TotalShows));
                                 $("#showStat", page).append(MainPage.createStat(config.TotalOwnedEpisodes));
                                 $("#showStat", page).append(MainPage.createStat(config.TotalShowStudios));
+                                $("#showStat", page).append(MainPage.createStatWithPoster(config.BiggestShow));
+                                $("#showStat", page).append(MainPage.createStatWithPoster(config.LongestShow));
+                                $("#showStat", page).append(MainPage.createStatWithPoster(config.NewestAddedEpisode));
 
                                 Dashboard.hideLoadingMsg();
                             }

@@ -629,19 +629,13 @@ namespace Statistics.Helpers
             var movies = GetAllMovies().ToList();
             if (movies.Any())
             {
-
-                foreach(var film in movies)
-                {
-                    _logger.Info("{0} : {1} kbps", film.Name, Math.Round((decimal)film.TotalBitrate / 1000));
-                }
-
                 var largest = movies.Aggregate((curMax, x) => curMax == null || x.TotalBitrate > curMax.TotalBitrate ? x : curMax);
 
 
                 if (largest != null)
                 {
                     var bitrate = Math.Round((decimal)largest.TotalBitrate / 1000);
-                    valueLineOne = CheckMaxLength($"{bitrate} kbps");
+                    valueLineOne = CheckMaxLength($"{bitrate} Kbps");
                     valueLineTwo = CheckMaxLength($"{largest.Name}");
                     id = largest.Id.ToString();
                 }
@@ -671,7 +665,7 @@ namespace Statistics.Helpers
                 if (lowest != null)
                 {
                     var bitrate = Math.Round((decimal)lowest.TotalBitrate / 1000);
-                    valueLineOne = CheckMaxLength($"{bitrate} kbps");
+                    valueLineOne = CheckMaxLength($"{bitrate} Kbps");
                     valueLineTwo = CheckMaxLength($"{lowest.Name}");
                     id = lowest.Id.ToString();
                 }

@@ -308,11 +308,13 @@
                                 $("#movieStat", page).append(MainPage.createStat(config.TotalMovieStudios));
                                 $("#movieStat", page).append(MainPage.createStatWithPoster(config.BiggestMovie));
                                 $("#movieStat", page).append(MainPage.createStatWithPoster(config.LongestMovie));
+                                $("#movieStat", page).append(MainPage.createStatWithPoster(config.NewestAddedMovie));
                                 $("#movieStat", page).append(MainPage.createStatWithPoster(config.OldestMovie));
                                 $("#movieStat", page).append(MainPage.createStatWithPoster(config.NewestMovie));
                                 $("#movieStat", page).append(MainPage.createStatWithPoster(config.HighestRating));
                                 $("#movieStat", page).append(MainPage.createStatWithPoster(config.LowestRating));
-                                $("#movieStat", page).append(MainPage.createStatWithPoster(config.NewestAddedMovie));
+                                $("#movieStat", page).append(MainPage.createStatWithPoster(config.HighestBitrateMovie));
+                                $("#movieStat", page).append(MainPage.createStatWithPoster(config.LowestBitrateMovie));
 
 
                                 $("#showStat", page).append(MainPage.createStat(config.TotalShows));
@@ -320,8 +322,10 @@
                                 $("#showStat", page).append(MainPage.createStat(config.TotalShowStudios));
                                 $("#showStat", page).append(MainPage.createStatWithPoster(config.BiggestShow));
                                 $("#showStat", page).append(MainPage.createStatWithPoster(config.LongestShow));
+                                $("#showStat", page).append(MainPage.createStatWithPoster(config.OldestShow));
+                                $("#showStat", page).append(MainPage.createStatWithPoster(config.NewestShow));
                                 $("#showStat", page).append(MainPage.createStatWithPoster(config.NewestAddedEpisode));
-
+                                
                                 Dashboard.hideLoadingMsg();
                             }
                         });

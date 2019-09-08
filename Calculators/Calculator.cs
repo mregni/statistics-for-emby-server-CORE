@@ -1,7 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Threading;
+using MediaBrowser.Controller.Dto;
 using MediaBrowser.Controller.Entities;
+using MediaBrowser.Controller.Entities.Movies;
 using MediaBrowser.Controller.Entities.TV;
 using MediaBrowser.Controller.Library;
 using MediaBrowser.Model.Entities;
@@ -67,7 +72,7 @@ namespace Statistics.Helpers
                     m =>
                         UserDataManager.GetUserData(
                                 User ??
-                                UserManager.Users.FirstOrDefault(u => m.IsPlayed(u) && UserDataManager.GetUserData(u, m).LastPlayedDate.HasValue), m)
+                                UserManager.Users.FirstOrDefault<User>(u => m.IsPlayed(u) && UserDataManager.GetUserData(u, m).LastPlayedDate.HasValue), m)
                             .LastPlayedDate)
                 .Take(8).ToList();
 
@@ -95,7 +100,7 @@ namespace Statistics.Helpers
                     m =>
                         UserDataManager.GetUserData(
                                 User ??
-                                UserManager.Users.FirstOrDefault(u => m.IsPlayed(u) && UserDataManager.GetUserData(u, m).LastPlayedDate.HasValue), m)
+                                UserManager.Users.FirstOrDefault<User>(u => m.IsPlayed(u) && UserDataManager.GetUserData(u, m).LastPlayedDate.HasValue), m)
                             .LastPlayedDate)
                 .Take(8).ToList();
 
@@ -615,6 +620,73 @@ namespace Statistics.Helpers
             };
         }
 
+        public ValueGroup CalculateHighestBitrateMovie()
+        {
+            var valueLineOne = Constants.NoData;
+            var valueLineTwo = "";
+            var id = "";
+
+            var movies = GetAllMovies().ToList();
+            if (movies.Any())
+            {
+
+                foreach(var film in movies)
+                {
+                    _logger.Info("{0} : {1} kbps", film.Name, Math.Round((decimal)film.TotalBitrate / 1000));
+                }
+
+                var largest = movies.Aggregate((curMax, x) => curMax == null || x.TotalBitrate > curMax.TotalBitrate ? x : curMax);
+
+
+                if (largest != null)
+                {
+                    var bitrate = Math.Round((decimal)largest.TotalBitrate / 1000);
+                    valueLineOne = CheckMaxLength($"{bitrate} kbps");
+                    valueLineTwo = CheckMaxLength($"{largest.Name}");
+                    id = largest.Id.ToString();
+                }
+            }
+
+            return new ValueGroup
+            {
+                Title = Constants.HighestBitrate,
+                ValueLineOne = valueLineOne,
+                ValueLineTwo = valueLineTwo,
+                Size = "half",
+                Id = id
+            };
+        }
+
+        public ValueGroup CalculateLowestBitrateMovie()
+        {
+            var valueLineOne = Constants.NoData;
+            var valueLineTwo = "";
+            var id = "";
+
+            var movies = GetAllMovies().ToList();
+            if (movies.Any())
+            {
+                var lowest = movies.Aggregate((curMax, x) => curMax == null || x.TotalBitrate < curMax.TotalBitrate && x.TotalBitrate > 0 ? x : curMax);
+
+                if (lowest != null)
+                {
+                    var bitrate = Math.Round((decimal)lowest.TotalBitrate / 1000);
+                    valueLineOne = CheckMaxLength($"{bitrate} kbps");
+                    valueLineTwo = CheckMaxLength($"{lowest.Name}");
+                    id = lowest.Id.ToString();
+                }
+            }
+
+            return new ValueGroup
+            {
+                Title = Constants.LowestBitrate,
+                ValueLineOne = valueLineOne,
+                ValueLineTwo = valueLineTwo,
+                Size = "half",
+                Id = id
+            };
+        }
+
         #endregion
 
         #region Period
@@ -759,7 +831,6 @@ namespace Statistics.Helpers
             };
         }
 
-        //Currently not working anymore so hiding from the plugin screen
         public ValueGroup CalculateNewestAddedMovie()
         {
             var valueLineOne = Constants.NoData;
@@ -822,6 +893,73 @@ namespace Statistics.Helpers
             return new ValueGroup
             {
                 Title = Constants.NewestAddedEpisode,
+                ValueLineOne = valueLineOne,
+                ValueLineTwo = valueLineTwo,
+                Size = "half",
+                Id = id
+            };
+        }
+
+        public ValueGroup CalculateOldestShow()
+        {
+            var valueLineOne = Constants.NoData;
+            var valueLineTwo = "";
+            var id = "";
+
+            var shows = GetAllSeries();
+            if (shows.Any())
+            {
+                var oldest = shows.Where(x => x.PremiereDate.HasValue && x.PremiereDate.Value.DateTime > DateTime.MinValue).Aggregate((curMin, x) => (curMin == null || (x.PremiereDate?.DateTime ?? DateTime.MaxValue) < curMin.PremiereDate ? x : curMin));
+
+                if (oldest != null && oldest.PremiereDate.HasValue)
+                {
+                    var oldestDate = oldest.PremiereDate.Value.DateTime;
+                    var numberOfTotalMonths = (DateTime.Now.Year - oldestDate.Year) * 12 + DateTime.Now.Month - oldestDate.Month;
+                    var numberOfYears = Math.Floor(numberOfTotalMonths / (decimal)12);
+                    var numberOfMonth = Math.Floor((numberOfTotalMonths / (decimal)12 - numberOfYears) * 12);
+
+                    valueLineOne = CheckMaxLength($"{CheckForPlural("year", numberOfYears, "", "", false)} {CheckForPlural("month", numberOfMonth, "and")} ago");
+                    valueLineTwo = CheckMaxLength($"{oldest.Name}");
+                    id = oldest.Id.ToString();
+                }
+            }
+
+            return new ValueGroup
+            {
+                Title = Constants.OldestPremieredShow,
+                ValueLineOne = valueLineOne,
+                ValueLineTwo = valueLineTwo,
+                Size = "half",
+                Id = id
+            };
+        }
+
+        public ValueGroup CalculateNewestShow()
+        {
+            var valueLineOne = Constants.NoData;
+            var valueLineTwo = "";
+            var id = "";
+
+            var shows = GetAllSeries();
+            if (shows.Any())
+            {
+                var youngest = shows.Where(x => x.PremiereDate.HasValue).Aggregate((curMax, x) => (curMax == null || (x.PremiereDate?.DateTime ?? DateTime.MinValue) > curMax.PremiereDate?.DateTime ? x : curMax));
+
+                if (youngest != null)
+                {
+                    var numberOfTotalDays = DateTime.Now.Date - youngest.PremiereDate.Value.DateTime;
+                    valueLineOne = CheckMaxLength(numberOfTotalDays.Days == 0
+                            ? $"Today"
+                            : $"{CheckForPlural("day", numberOfTotalDays.Days, "", "", false)} ago");
+
+                    valueLineTwo = CheckMaxLength($"{youngest.Name}");
+                    id = youngest.Id.ToString();
+                }
+            }
+
+            return new ValueGroup
+            {
+                Title = Constants.NewestPremieredShow,
                 ValueLineOne = valueLineOne,
                 ValueLineTwo = valueLineTwo,
                 Size = "half",

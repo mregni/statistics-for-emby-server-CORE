@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -13,6 +14,7 @@ using MediaBrowser.Model.IO;
 using MediaBrowser.Model.Logging;
 using MediaBrowser.Model.Tasks;
 using statistics;
+using statistics.Calculators;
 using statistics.Configuration;
 using statistics.Models.Configuration;
 using Statistics.Api;
@@ -153,12 +155,16 @@ namespace Statistics.ScheduledTasks
                 PluginConfiguration.HighestRating = calculator.CalculateHighestRating();
                 PluginConfiguration.LowestRating = calculator.CalculateLowestRating();
                 PluginConfiguration.NewestAddedMovie = calculator.CalculateNewestAddedMovie();
+                PluginConfiguration.HighestBitrateMovie = calculator.CalculateHighestBitrateMovie();
+                PluginConfiguration.LowestBitrateMovie = calculator.CalculateLowestBitrateMovie();
 
                 PluginConfiguration.TotalShows = calculator.CalculateTotalShows();
                 PluginConfiguration.TotalOwnedEpisodes = calculator.CalculateTotalOwnedEpisodes();
                 PluginConfiguration.TotalShowStudios = calculator.CalculateTotalShowStudios();
                 PluginConfiguration.BiggestShow = calculator.CalculateBiggestShow();
                 PluginConfiguration.LongestShow = calculator.CalculateLongestShow();
+                PluginConfiguration.OldestShow = calculator.CalculateOldestShow();
+                PluginConfiguration.NewestShow = calculator.CalculateNewestShow();
                 PluginConfiguration.NewestAddedEpisode = calculator.CalculateNewestAddedEpisode();
 
                 PluginConfiguration.MovieQualityItems = calculator.CalculateMovieQualityList();

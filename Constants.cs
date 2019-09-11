@@ -29,10 +29,14 @@
         internal const string BiggestShow = "Largest TV Series Total Size";
         internal const string OldesPremieredtMovie = "Oldest Premiered Movie";
         internal const string NewestPremieredMovie = "Newest Premiered Movie";
+        internal const string OldestPremieredShow = "Oldest Premiered Show";
         internal const string NewestAddedMovie = "Newest Added Movie";
         internal const string NewestAddedEpisode = "Newest Added Episode";
+        internal const string NewestPremieredShow = "Newest Premiered Show";
         internal const string HighestMovieRating = "Highest Movie Rating";
         internal const string LowestMovieRating = "Lowest Movie Rating";
+        internal const string HighestBitrate = "Highest Movie Bitrate";
+        internal const string LowestBitrate = "Lowest Movie Bitrate";
         internal const string TotalStudios = "Total Studio's";
         internal const string TotalUsers = "Total Users";
 

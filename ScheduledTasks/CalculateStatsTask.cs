@@ -198,11 +198,25 @@ namespace Statistics.ScheduledTasks
             //first run
             if (string.IsNullOrEmpty(time))
             {
-                callFailed = FirstTvdbConnection(calculator, seriesIdsInLibrary, cancellationToken);
+                try
+                {
+                    callFailed = FirstTvdbConnection(calculator, seriesIdsInLibrary, cancellationToken);
+                }
+                catch
+                {
+                    callFailed = false;
+                }
             }
             else
             {
-                callFailed = UpdateTvdbConnection(calculator, time, seriesIdsInLibrary, cancellationToken);
+                try
+                {
+                    callFailed = UpdateTvdbConnection(calculator, time, seriesIdsInLibrary, cancellationToken);
+                }
+                catch
+                {
+                    callFailed = false;
+                }
             }
 
             PluginConfiguration.TotalEpisodeCounts.LastUpdateTime = calculator.GetServerTime(cancellationToken);
